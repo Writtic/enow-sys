@@ -10,8 +10,6 @@ import java.util.concurrent.Executor;
 import org.apache.commons.io.input.Tailer;
 import org.apache.commons.io.input.TailerListenerAdapter;
 
-import backtype.storm.utils.Time;
-
 //import org.apache.kafka.clients.KeyedMessage;
 //import kafka.javaapi.producer.Producer;
 import org.apache.kafka.clients.producer.*;
