@@ -25,6 +25,6 @@ public class CutLogBolt extends BaseBasicBolt{
 	}
 
 	public void declareOutputFields(OutputFieldsDeclarer declarer) {
-//		declarer.declare(new Fields("key","doctype"));
+		declarer.declare(new Fields("key","doctype"));
 	}
 }
