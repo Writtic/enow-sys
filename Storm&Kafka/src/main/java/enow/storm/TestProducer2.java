@@ -1,8 +1,11 @@
 package enow.storm;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.kafka.clients.producer.*;
+import org.apache.storm.generated.AlreadyAliveException;
+import org.apache.storm.generated.InvalidTopologyException;
 
 public class TestProducer2 {
 
@@ -10,18 +13,22 @@ public class TestProducer2 {
 
 	Producer<String, String> producer;
 
-	private String[] sentences;
+	private static String[] sentences = new String[]{
+            "one dog9 - saw the fox over the moon",
+            "two cats9 - saw the fox over the moon",
+            "four bears9 - saw the fox over the moon",
+            "five goats9 - saw the fox over the moon",
+    };
 
-	TestProducer2(String[] sentences, String topicName) {
-		this.sentences = sentences;
+	TestProducer2(String topicName) {
 		this.topicName = topicName;
 	}
 
-	public void startProducer() {
-		emitBatch();
-		emitBatch();
+	public static void main(String[] args) throws InvalidTopologyException, AlreadyAliveException, IOException {
+		TestProducer2 producer = new TestProducer2("test");
+		producer.emitBatch();
 	}
-
+	
 	private void emitBatch() {
 		Properties props = new Properties();
 		props.put("batch.size", "1");

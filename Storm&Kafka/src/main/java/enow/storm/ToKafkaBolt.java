@@ -5,32 +5,24 @@ import org.apache.storm.kafka.bolt.selector.DefaultTopicSelector;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
-import org.apache.storm.topology.base.BaseRichBolt;
+import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
-import org.apache.kafka.clients.producer.*;
+import org.apache.storm.tuple.Values;
+import org.apache.storm.kafka.bolt.mapper.FieldNameBasedTupleToKafkaMapper;
 
-import org.apache.storm.kafka.bolt.mapper.TupleToKafkaMapper;
-
-import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 //Send a message to Apache Kafka via Bolt of Apache Storm
-public class ToKafkaBolt extends KafkaBolt<Object, Object> {
+public class ToKafkaBolt extends KafkaBolt<String, String> {
 	private static final long serialVersionUID = 1L;
 
 	private String brokerConnectString;
 	private String topicName;
-	private String serializerClass;
 	
-	private int expectedNumMessages;
-    private int countReceivedMessages = 0;
-
-	private transient Producer<String, String> producer;
 	private transient OutputCollector collector;
 	private transient TopologyContext context;
 
-	ToKafkaBolt(String brokerConnectString, String topicName, int expectedNumMessages) {
-		this.expectedNumMessages = expectedNumMessages;
+	ToKafkaBolt(String brokerConnectString, String topicName) {
 		this.brokerConnectString = brokerConnectString;
 		this.topicName = topicName;
 	}
@@ -44,32 +36,21 @@ public class ToKafkaBolt extends KafkaBolt<Object, Object> {
 		props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 		
 		this.withProducerProperties(props)
-        .withTopicSelector(new DefaultTopicSelector(topicName));
+        .withTopicSelector(new DefaultTopicSelector(topicName))
+		.withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper<String, String>());
         
 		this.context = context;
 		this.collector = collector;
 	}
 
 	public void execute(Tuple input) {
-		this.withTupleToKafkaMapper(TupleToKafkaMapper input);
 		final String msg = input.toString();
-
-        countReceivedMessages++;
-        String info = " recvd: " + countReceivedMessages + " expected: " + expectedNumMessages;
-        System.out.println(info +    " >>>>>>>>>>>>>" + msg);
-
-        TestTopology.recordRecievedMessage(msg);
-        ProducerRecord<String, String> data = new ProducerRecord<String, String>(topicName, msg+" from Apache Storm");
-        if (countReceivedMessages == expectedNumMessages) {
-            System.out.println(" +++++++++++++++++++++ MARKING");
-            TestTopology.finishedCollecting = true;
-        }
-        if (countReceivedMessages > expectedNumMessages) {
-            System.out.print("Fatal error: too many messages received");
-            System.exit(-1);
-        }
+		String[] words = msg.split(" ");
+		for(String word:words){
+			System.out.println("Word: "+word);
+			collector.emit(input, new Values(word));
+		}
 		try {
-			producer.send(data);
 			collector.ack(input);
 		} catch (Exception e) {
 			collector.fail(input);
@@ -77,5 +58,6 @@ public class ToKafkaBolt extends KafkaBolt<Object, Object> {
 	}
 	
 	public void declareOutputFields(OutputFieldsDeclarer declarer) {
+		declarer.declare( new Fields("word"));
 	}
 }
