@@ -1,0 +1,4 @@
+org/apache/storm/kafka/spout/KafkaSpoutStreamsNamedTopics$1.class
+org/apache/storm/kafka/spout/KafkaSpoutTuplesBuilderNamedTopics$1.class
+org/apache/storm/kafka/spout/KafkaSpoutConfig$1.class
+org/apache/storm/kafka/spout/KafkaSpoutRetryExponentialBackoff$1.class
