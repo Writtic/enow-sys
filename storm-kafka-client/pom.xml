@@ -17,8 +17,8 @@
 	<parent>
 		<artifactId>storm</artifactId>
 		<groupId>org.apache.storm</groupId>
-		<version>2.0.0-SNAPSHOT</version>
-		<relativePath>../../pom.xml</relativePath>
+		<version>1.0.1</version>
+		<!-- <relativePath>../../pom.xml</relativePath> -->
 	</parent>
 
 	<artifactId>storm-kafka-client</artifactId>
@@ -28,9 +28,9 @@
 
 	<developers>
 		<developer>
-			<id>hmcl</id>
-			<name>Hugo Louro</name>
-			<email>hmclouro@gmail.com</email>
+			<id>Writtic</id>
+			<name>Park Jun Seong</name>
+			<email>writtic@gmail.com</email>
 		</developer>
 	</developers>
 
@@ -40,6 +40,7 @@
 			<groupId>org.apache.storm</groupId>
 			<artifactId>storm-core</artifactId>
 			<version>1.0.1</version>
+			<scope>provided</scope>
 		</dependency>
 		<!--kafka libraries -->
 		<!--test dependencies -->
@@ -47,17 +48,24 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<scope>test</scope>
+			<version>1.10.19</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
 			<artifactId>kafka-clients</artifactId>
 			<version>0.10.0.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka_2.10</artifactId>
+			<version>0.9.0.1</version>
 		</dependency>
 	</dependencies>
 
@@ -78,7 +86,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.4.1</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -89,7 +96,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>org.apache.storm.kafka.spout.test.KafkaSpoutTopologyMain</mainClass>
+									<mainClass>org.apache.storm.kafka.spout.test.KafkaSpoutTopologyMainNamedTopics</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>

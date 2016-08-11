@@ -1,0 +1,5 @@
+org/apache/storm/kafka/spout/test/KafkaSpoutTestBolt.class
+org/apache/storm/kafka/spout/test/TopicsTest0Test1TupleBuilder.class
+org/apache/storm/kafka/spout/test/KafkaSpoutTopologyMainWildcardTopics.class
+org/apache/storm/kafka/spout/test/TopicTest2TupleBuilder.class
+org/apache/storm/kafka/spout/test/KafkaSpoutTopologyMainNamedTopics.class

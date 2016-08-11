@@ -45,24 +45,18 @@ import java.util.concurrent.TimeUnit;
 import static org.apache.storm.kafka.spout.KafkaSpoutConfig.FirstPollOffsetStrategy.EARLIEST;
 
 public class KafkaSpoutTopologyMainNamedTopics {
-	private static final String jarUrl = "/usr/local/Cellar/storm/1.0.1/libexec/lib/storm-core-1.0.1.jar";
     private static final String[] STREAMS = new String[]{"test_stream","test1_stream","test2_stream"};
     private static final String[] TOPICS = new String[]{"test","test1","test2"};
 
-
     public static void main(String[] args) throws Exception {
         new KafkaSpoutTopologyMainNamedTopics().runMain(args);
-        
     }
-
     protected void runMain(String[] args) throws Exception {
-//        if (args.length == 0) {
-//            submitTopologyLocalCluster(getTopolgyKafkaSpout(), getConfig());
-//        } else {
-    	System.setProperty("storm.jar", jarUrl);
-        submitTopologyRemoteCluster("enow", getTopolgyKafkaSpout(), getConfig());
-//        }
-
+        if (args.length == 0) {
+            submitTopologyLocalCluster(getTopolgyKafkaSpout(), getConfig());
+        } else {
+        	submitTopologyRemoteCluster("enow", getTopolgyKafkaSpout(), getConfig());
+        }
     }
 
     protected void submitTopologyLocalCluster(StormTopology topology, Config config) throws InterruptedException {
@@ -89,7 +83,7 @@ public class KafkaSpoutTopologyMainNamedTopics {
     protected Config getConfig() {
         Config config = new Config();
         config.setNumWorkers(3);
-        config.setDebug(true);
+        //config.setDebug(true);
         return config;
     }
 
@@ -127,18 +121,19 @@ public class KafkaSpoutTopologyMainNamedTopics {
         props.put(KafkaSpoutConfig.Consumer.VALUE_DESERIALIZER, "org.apache.kafka.common.serialization.StringDeserializer");
         return props;
     }
-
     protected KafkaSpoutTuplesBuilder<String, String> getTuplesBuilder() {
         return new KafkaSpoutTuplesBuilderNamedTopics.Builder<>(
                 new TopicsTest0Test1TupleBuilder<String, String>(TOPICS[0], TOPICS[1]),
                 new TopicTest2TupleBuilder<String, String>(TOPICS[2]))
                 .build();
     }
-
     protected KafkaSpoutStreams getKafkaSpoutStreams() {
-        final Fields outputFields = new Fields("topic", "partition", "offset", "key", "value");
-        final Fields outputFields1 = new Fields("topic", "partition", "offset");
-        return new KafkaSpoutStreamsNamedTopics.Builder(outputFields, STREAMS[0], new String[]{TOPICS[0], TOPICS[1]})  // contents of topics test, test1, sent to test_stream
+//        final Fields outputFields = new Fields("topic", "partition", "offset", "key", "value");
+//        final Fields outputFields1 = new Fields("topic", "partition", "offset");
+    	final Fields outputFields = new Fields("value");
+    	final Fields outputFields1 = new Fields("topic", "partition", "offset");
+        return new KafkaSpoutStreamsNamedTopics
+        		.Builder(outputFields, STREAMS[0], new String[]{TOPICS[0], TOPICS[1]})  // contents of topics test, test1, sent to test_stream
                 .addStream(outputFields, STREAMS[0], new String[]{TOPICS[2]})  // contents of topic test2 sent to test_stream
                 .addStream(outputFields1, STREAMS[2], new String[]{TOPICS[2]})  // contents of topic test2 sent to test2_stream
                 .build();

@@ -33,7 +33,8 @@ public class TopicTest2TupleBuilder<K, V> extends KafkaSpoutTupleBuilder<K,V> {
 
     @Override
     public List<Object> buildTuple(ConsumerRecord<K, V> consumerRecord) {
-        return new Values(consumerRecord.topic(),
+        return new Values(
+        		consumerRecord.topic(),
                 consumerRecord.partition(),
                 consumerRecord.offset());
     }

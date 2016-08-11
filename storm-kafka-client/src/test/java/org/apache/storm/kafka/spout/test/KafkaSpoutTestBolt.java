@@ -22,6 +22,7 @@ import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.base.BaseRichBolt;
+import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
 import org.slf4j.Logger;
@@ -48,14 +49,15 @@ public class KafkaSpoutTestBolt extends BaseRichBolt {
     @Override
     public void execute(Tuple input) {
     	Producer<String, String> producer = new KafkaProducer<String, String>(props);
-    	final String msg = input.toString();
-		String[] words = msg.split(" ");
-		for(String word:words){
+    	final String msg = input.getValues().toString();
+    	String word = msg.substring(1, msg.length() - 1);
+//		String[] words = msg.split(" ");
+//		for(String word:words){
 			System.out.println("Word: "+word);
 			collector.emit(input, new Values(word));
 			ProducerRecord<String, String> data = new ProducerRecord<String, String>("messages", word);
 			producer.send(data);
-		}
+//		}
 		try {
 			LOG.debug("input = [" + input + "]");
 			collector.ack(input);
@@ -66,6 +68,6 @@ public class KafkaSpoutTestBolt extends BaseRichBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-
+    	declarer.declare(new Fields("groupid", "log"));
     }
 }
