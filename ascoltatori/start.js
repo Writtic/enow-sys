@@ -11,7 +11,7 @@ var settings = {
     type: 'mqtt',
     json: false,
     mqtt: require('mqtt'),
-    url: 'http://localhost:1883'
+    url: 'http://localhost:9001'
 };
 
 var settings_kafka = {
@@ -28,9 +28,9 @@ var settings_kafka = {
 };
 
 function app() {
-    ascoltatori_mqtt.build(settings, function(err_mqtt, ascoltatori_mqtt) {
+    ascoltatori_mqtt.build(settings, function(err_mqtt, ascoltatore_mqtt) {
         ascoltatori_kafka.build(settings_kafka, function(err_kafka, ascoltatore_kafka) {
-            ascoltatori_mqtt.subscribe("test", function() {
+            ascoltatore_mqtt.subscribe("test", function() {
                 console.log("mqtt_subscribe...\n" + "value: " + arguments[1] + ".....\n");
                 arg_mqtt = arguments[1];
                 ascoltatore_kafka.publish("test", arg_mqtt, function() {
@@ -39,7 +39,7 @@ function app() {
                     ascoltatore_kafka.subscribe("messages", function() {
                         console.log("kafka_subscribe...\n" + "value: " + arguments[1] + "\n");
                         arrrg_kafka = arguments[1];
-                        ascoltatori_mqtt.publish("messages", arrrg_kafka, function() {
+                        ascoltatore_mqtt.publish("messages", arrrg_kafka, function() {
                             console.log("mqtt_publish...\n" + "value: " + arrrg_kafka + "\n");
                             arrrg_kafka = null;
                         });
